@@ -47,14 +47,14 @@
 %%
 
 \r\n|\n {
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
 
     yyless(0);
     BEGIN TEXT;
 }
 
 . {
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
 
     yyless(0);
     BEGIN TEXT;
@@ -73,14 +73,14 @@
 }
 
 <TEXT>"<%=" {    /* expression */
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0); req.write(str("));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end=''); print("));
     PSP_PG(is_psp_echo) = 1;
 
     BEGIN PYCODE;
 }
 
 <TEXT>"<%" {     /* python code */
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0);"));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end='');"));
     CLEAR_WHITESPACE(&PSP_PG(whitespace));
     PSP_PG(seen_newline) = 0;
     BEGIN PYCODE;
@@ -110,7 +110,7 @@
     yypop_buffer_state(yyscanner);
     if (!YY_CURRENT_BUFFER) {
         /* this is really the end */
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0)\n"));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end='')\n"));
         yyterminate();
     }
     else {
@@ -129,13 +129,13 @@
 <PYCODE>"%>" {
 
     if (PSP_PG(is_psp_echo)) {
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("),0); req.write(\"\"\""));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR(", end=''); print('''"));
         PSP_PG(is_psp_echo) = 0;
     }
     else {
         if (!PSP_PG(seen_newline)) {
             /* this will happen is you have <%%> */
-            psp_string_appendc(&PSP_PG(pycode), ';');
+            psp_string_appendl(&PSP_PG(pycode), STATIC_STR("; "));
         }
 
         if (PSP_PG(after_colon)) {
@@ -145,7 +145,7 @@
             PSP_PG(after_colon) = 0;
         }
         OUTPUT_WHITESPACE(&PSP_PG(whitespace));
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
     }
 
     BEGIN TEXT;

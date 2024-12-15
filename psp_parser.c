@@ -1,6 +1,6 @@
-#line 2 "psp_parser.c"
+#line 1 "psp_parser.c"
 
-#line 4 "psp_parser.c"
+#line 3 "psp_parser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -501,10 +501,10 @@ static const flex_int16_t yy_chk[115] =
 
 #define CLEAR_WHITESPACE(__wsstring) psp_string_clear((__wsstring));
 
-#line 505 "psp_parser.c"
+#line 504 "psp_parser.c"
 #define YY_NO_UNISTD_H 1
 
-#line 508 "psp_parser.c"
+#line 507 "psp_parser.c"
 
 #define INITIAL 0
 #define TEXT 1
@@ -775,7 +775,7 @@ YY_DECL
 #line 47 "psp_parser.l"
 
 
-#line 779 "psp_parser.c"
+#line 778 "psp_parser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -838,7 +838,7 @@ case 1:
 YY_RULE_SETUP
 #line 49 "psp_parser.l"
 {
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
 
     yyless(0);
     BEGIN TEXT;
@@ -848,7 +848,7 @@ case 2:
 YY_RULE_SETUP
 #line 56 "psp_parser.l"
 {
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
 
     yyless(0);
     BEGIN TEXT;
@@ -879,7 +879,7 @@ case 6:
 YY_RULE_SETUP
 #line 75 "psp_parser.l"
 {    /* expression */
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0); req.write(str("));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end=''); print("));
     PSP_PG(is_psp_echo) = 1;
 
     BEGIN PYCODE;
@@ -889,7 +889,7 @@ case 7:
 YY_RULE_SETUP
 #line 82 "psp_parser.l"
 {     /* python code */
-    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0);"));
+    psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end='');"));
     CLEAR_WHITESPACE(&PSP_PG(whitespace));
     PSP_PG(seen_newline) = 0;
     BEGIN PYCODE;
@@ -934,7 +934,7 @@ case YY_STATE_EOF(TEXT):
     yypop_buffer_state(yyscanner);
     if (!YY_CURRENT_BUFFER) {
         /* this is really the end */
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("\"\"\",0)\n"));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("''', end='')\n"));
         yyterminate();
     }
     else {
@@ -960,13 +960,13 @@ YY_RULE_SETUP
 {
 
     if (PSP_PG(is_psp_echo)) {
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("),0); req.write(\"\"\""));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR(", end=''); print('''"));
         PSP_PG(is_psp_echo) = 0;
     }
     else {
         if (!PSP_PG(seen_newline)) {
             /* this will happen is you have <%%> */
-            psp_string_appendc(&PSP_PG(pycode), ';');
+            psp_string_appendl(&PSP_PG(pycode), STATIC_STR("; "));
         }
 
         if (PSP_PG(after_colon)) {
@@ -976,7 +976,7 @@ YY_RULE_SETUP
             PSP_PG(after_colon) = 0;
         }
         OUTPUT_WHITESPACE(&PSP_PG(whitespace));
-        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("req.write(\"\"\""));
+        psp_string_appendl(&PSP_PG(pycode), STATIC_STR("print('''"));
     }
 
     BEGIN TEXT;
@@ -1102,7 +1102,7 @@ YY_RULE_SETUP
 #line 240 "psp_parser.l"
 ECHO;
 	YY_BREAK
-#line 1106 "psp_parser.c"
+#line 1105 "psp_parser.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(PYCODE):
 case YY_STATE_EOF(INDENT):
