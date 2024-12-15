@@ -15,7 +15,7 @@ $(NAME).so: psp_parser.c
 	$(PYTHON) setup.py build_ext --inplace
 
 clean:
-	rm -rf build $(NAME).*.so
+	rm -rf build dist *.egg-info $(NAME).*.so
 
 test:
 	$(PYTHON) tests.py
