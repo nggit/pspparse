@@ -25,7 +25,7 @@
 #include "psp_flex.h"
 #include "psp_parser.h"
 #include "psp_string.h"
-#include "_pspmodule.h"
+#include "pspparse.h"
 #include "Python.h"
 
 static psp_parser_t *
