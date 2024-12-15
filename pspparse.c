@@ -28,7 +28,8 @@
 #include "_pspmodule.h"
 #include "Python.h"
 
-static psp_parser_t *psp_parser_init(void)
+static psp_parser_t *
+psp_parser_init(void)
 {
     psp_parser_t *parser;
 
@@ -44,7 +45,8 @@ static psp_parser_t *psp_parser_init(void)
     return parser;
 }
 
-static void psp_parser_cleanup(psp_parser_t *parser)
+static void
+psp_parser_cleanup(psp_parser_t *parser)
 {
     if (parser->pycode.allocated) {
         free(parser->pycode.blob);
@@ -57,7 +59,8 @@ static void psp_parser_cleanup(psp_parser_t *parser)
     free(parser);
 }
 
-static PyObject * _psp_module_parse(PyObject *self, PyObject *argv)
+static PyObject *
+_pspparse_parse(PyObject *self, PyObject *argv)
 {
     PyObject *code;
     char     *filename;
@@ -123,7 +126,8 @@ static PyObject * _psp_module_parse(PyObject *self, PyObject *argv)
     return code;
 }
 
-static PyObject * _psp_module_parsestring(PyObject *self, PyObject *argv)
+static PyObject *
+_pspparse_parsestring(PyObject *self, PyObject *argv)
 {
     PyObject *code;
     PyObject *str;
@@ -173,49 +177,22 @@ static PyObject * _psp_module_parsestring(PyObject *self, PyObject *argv)
     return code;
 }
 
-static PyMethodDef _psp_module_methods[] = {
-    {"parse",       (PyCFunction) _psp_module_parse,       METH_VARARGS},
-    {"parsestring", (PyCFunction) _psp_module_parsestring, METH_VARARGS},
-    {NULL, NULL}
+static PyMethodDef _pspparse_methods[] = {
+    {"parse",        _pspparse_parse,       METH_VARARGS, ""},
+    {"parsestring",  _pspparse_parsestring, METH_VARARGS, ""},
+    {"parse_string", _pspparse_parsestring, METH_VARARGS, ""},
+    {NULL, NULL, 0, NULL}
 };
 
-#if PY_MAJOR_VERSION >= 3
-
-static struct PyModuleDef _psp_moduledef = {
+static struct PyModuleDef _pspparse_module = {
     PyModuleDef_HEAD_INIT,
-    "_psp",                 /* m_name */
-    NULL,                   /* m_doc */
-    -1,                     /* m_size */
-    _psp_module_methods, /* m_methods */
-    NULL,
-    NULL,
-    NULL,
-    NULL,
+    "pspparse",       /* __name__ */
+    NULL,             /* __doc__ */
+    -1,
+    _pspparse_methods 
 };
 
-#endif
-
-PyObject * _init_psp(void)
-{
-    PyObject *m;
-#if PY_MAJOR_VERSION < 3
-    m = Py_InitModule("_psp", _psp_module_methods);
-#else
-    m = PyModule_Create(&_psp_moduledef);
-#endif
-    return m;
+PyMODINIT_FUNC
+PyInit_pspparse(void) {
+    return PyModule_Create(&_pspparse_module);
 }
-
-#if PY_MAJOR_VERSION < 3
-
-PyMODINIT_FUNC init_psp(void) {
-    _init_psp();
-}
-
-#else
-
-PyMODINIT_FUNC PyInit__psp(void) {
-    return _init_psp();
-}
-
-#endif
